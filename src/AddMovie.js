@@ -49,6 +49,7 @@ class AddMovie extends React.Component {
     // X-Men
     // Star Wars
   }
+  // Pas utile
   getToken = () => getToken(this.state.apiKey)
     .then(({ request_token }) => this.setState({
       requestToken: request_token
@@ -67,9 +68,11 @@ class AddMovie extends React.Component {
       {
         apiKey
         ? <form onSubmit={this.onSubmit}>
-            { ! requestToken && <button className="btn" type="button" onClick={this.getToken}>token</button>}
+            {/* ! requestToken && <button className="btn" type="button" onClick={this.getToken}>token</button>*/}
             <div className="form-group">
               <label htmlFor="input">Saisissez le nom d'un film (ou les premières lettres)</label>
+              <p className="text-info"><small>Il est conseillé - pour ne pas exploser les quotas de l'API - de coller directement des titres de films dans le champ. Exemples:
+              Indiana Jones, Harry Potter, Back to the Future, Transformers, X-Men, Star Wars, etc.</small></p>
               {/*<input value={this.state.title} onChange={this.onMovieNameChanged} name="title" type="text" className="form-control" id="title" placeholder="Nom du film" />*/}
               <Autocomplete
                 inputProps={{className: 'form-control'}}
@@ -93,7 +96,7 @@ class AddMovie extends React.Component {
             <div>
             {
               movie && <div>
-                <img style={{maxHeight: '200px', float: 'left', marginRight: '20px'}} src={`${thumbnailRoot}/${movie.poster_path}`} />
+                <img style={{maxHeight: '150px', float: 'left', marginRight: '20px'}} src={`${thumbnailRoot}/${movie.poster_path}`} />
                 <h5>{ movie.title }</h5>
                 <p>{ movie.overview }</p>
                 <button type="submit" className="btn btn-primary">Submit</button>

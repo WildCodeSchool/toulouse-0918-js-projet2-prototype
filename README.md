@@ -1,3 +1,18 @@
+# Exemple projet 2 JS/React: WildMovies
+
+Une petite app pour gérer sa collection personnelle de films. Les films sont lus à partir de l'API TheMovieDB **version 3** (la v4 est très limitée apparemment).
+
+## Setup
+
+Il faut une clé d'API de TheMovieDB:
+- d'abord, [signup](https://www.themoviedb.org/account/signup)
+- puis va dans tes [settings](https://www.themoviedb.org/settings/api) et copie-colle la **API Key (v3 auth)**,
+que tu colleras dans le champ prévu à cet effet dans la page "Ajouter un film".
+- la clé d'API et les films sont stockés dans le localStorage.
+
+That's all folks!
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
