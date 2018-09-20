@@ -3,11 +3,13 @@ import Autocomplete from 'react-autocomplete';
 import SetApiKey from './SetApiKey';
 import { getToken, searchMovies } from './helpers/api';
 
+const thumbnailRoot = 'http://image.tmdb.org/t/p/w200'
+
 class AddMovie extends React.Component {
   state = {
     apiKey: '',
     requestToken: '',
-    movieName: '',
+    title: '',
     results: []
   }
   componentDidMount() {
@@ -23,7 +25,7 @@ class AddMovie extends React.Component {
     this.setState({ apiKey })
   }
   onMovieNameChanged = e => {
-    const movieName = e.target.value
+    const title = e.target.value
     // Try
     // Indiana Jones
     // Harry Potter
@@ -31,10 +33,10 @@ class AddMovie extends React.Component {
     // Transformers
     // X-Men
     // Star Wars
-    searchMovies(movieName, this.state.apiKey)
+    searchMovies(title, this.state.apiKey)
       .then(({ results }) => this.setState({ results }))
     this.setState({
-      movieName
+      title
     })
   }
   getToken = () => getToken(this.state.apiKey)
@@ -51,22 +53,27 @@ class AddMovie extends React.Component {
             { ! requestToken && <button className="btn" type="button" onClick={this.getToken}>token</button>}
             <div className="form-group">
               <label htmlFor="input">Saisissez le nom d'un film (ou les premières lettres)</label>
-              <input value={this.state.movieName} onChange={this.onMovieNameChanged} name="movieName" type="text" className="form-control" id="movieName" placeholder="Nom du film" />
-            </div>
-            {
-              results.length && <Autocomplete
+              {/*<input value={this.state.title} onChange={this.onMovieNameChanged} name="title" type="text" className="form-control" id="title" placeholder="Nom du film" />*/}
+              <Autocomplete
+                inputProps={{className: 'form-control'}}
+                wrapperStyle={{display: 'block'}}
                 getItemValue={item => item.title}
                 items={results}
                 renderItem={(item, isHighlighted) =>
-                  <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                    {item.title}
+                  <div className="col-md-2 col-sm-12" style={{ background: isHighlighted ? 'lightgray' : 'white', position: 'relative' }}>
+                    <img className="img-fluid" src={`${thumbnailRoot}/${item.poster_path}`} />
+                    <div className="autocomplete-thumbnail">{item.title}</div>
                   </div>
                 }
+                renderMenu={(items, value, style) => {
+                  return <div className="row" style={{ ...style, ...this.menuStyle }} children={items}/>
+                }}
+                getItemValue={item => { console.log(item); return item.title; }}
                 value={title}
-                onChange={ e => this.setState({ title: e.target.value }) }
+                onChange={ this.onMovieNameChanged }
                 onSelect={ val => this.setState({ title: val }) }
               />
-            }
+            </div>
             <button type="submit" className="btn btn-primary">Submit</button>
           </form>
         : <SetApiKey onSubmit={this.onApiKeySubmit} />
