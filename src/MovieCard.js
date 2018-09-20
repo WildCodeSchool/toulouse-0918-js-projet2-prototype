@@ -1,7 +1,7 @@
 import React from 'react';
 
 const MovieCard = ({ movie: { title, img, summary } }) => (
-  <div className="col-md-4">
+  <div className="col-md-3">
     <div className="card mb-4 shadow-sm">
       <img className="card-img-top" src={ img || '/img/thumbnail.svg' } alt="Card image cap" />
       <div className="card-body">
