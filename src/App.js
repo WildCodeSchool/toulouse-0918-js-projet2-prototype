@@ -44,6 +44,13 @@ const movies = [
 ]
 class App extends Component {
 
+  state = { movies }
+
+  onMovieAdded = movie => {
+    const movies = this.state.movies.map(m => ({ ...m })).concat({ ...movie })
+    this.setState({ movies })
+  }
+
   render() {
     return (
       <Router>
@@ -56,8 +63,8 @@ class App extends Component {
               <div className="container">
 
                 <Switch>
-                  <Route exact path="/" render={() => <MovieList movies={movies} />} />
-                  <Route exact path="/add-movie" render={() => <AddMovie />} />
+                  <Route exact path="/" render={() => <MovieList movies={this.state.movies} />} />
+                  <Route exact path="/add-movie" render={() => <AddMovie onMovieAdded={this.onMovieAdded} />} />
                 </Switch>
 
               </div>

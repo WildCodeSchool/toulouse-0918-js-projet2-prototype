@@ -10,6 +10,7 @@ class AddMovie extends React.Component {
     apiKey: '',
     requestToken: '',
     title: '',
+    movie: null,
     results: []
   }
   componentDidMount() {
@@ -24,8 +25,22 @@ class AddMovie extends React.Component {
     localStorage.setItem('wmTmdbKey', apiKey)
     this.setState({ apiKey })
   }
-  onMovieNameChanged = e => {
+  onTitleInputChanged = e => {
     const title = e.target.value
+    searchMovies(title, this.state.apiKey)
+      .then(({ results }) => this.setState({ results }))
+
+    this.setState({
+      title
+    })
+  }
+  onMovieSelected = idAndTitle => {
+    const [idStr, title] = idAndTitle.split('-')
+    const movieId = Number(idStr)
+    const movie = this.state.results.find(m => m.id === movieId)
+    this.setState({
+      id: movieId, movie, title
+    })
     // Try
     // Indiana Jones
     // Harry Potter
@@ -33,23 +48,25 @@ class AddMovie extends React.Component {
     // Transformers
     // X-Men
     // Star Wars
-    searchMovies(title, this.state.apiKey)
-      .then(({ results }) => this.setState({ results }))
-    this.setState({
-      title
-    })
   }
   getToken = () => getToken(this.state.apiKey)
     .then(({ request_token }) => this.setState({
       requestToken: request_token
     }))
+  onSubmit = e => {
+    e.preventDefault()
+    const { title, overview: summary, poster_path } = this.state.movie
+    const img = `${thumbnailRoot}/${poster_path}`
+    console.log(this.state.movie, title, summary, img)
+    this.props.onMovieAdded({ title, summary, img })
+  }
   render() {
-    const { apiKey, requestToken, results, title } = this.state
+    const { apiKey, requestToken, results, title, movie } = this.state
     return (
       <div className="fill">
       {
         apiKey
-        ? <form>
+        ? <form onSubmit={this.onSubmit}>
             { ! requestToken && <button className="btn" type="button" onClick={this.getToken}>token</button>}
             <div className="form-group">
               <label htmlFor="input">Saisissez le nom d'un film (ou les premières lettres)</label>
@@ -57,10 +74,10 @@ class AddMovie extends React.Component {
               <Autocomplete
                 inputProps={{className: 'form-control'}}
                 wrapperStyle={{display: 'block'}}
-                getItemValue={item => item.title}
+                getItemValue={item => `${item.id}-${item.title}`}
                 items={results}
                 renderItem={(item, isHighlighted) =>
-                  <div className="col-md-2 col-sm-12" style={{ background: isHighlighted ? 'lightgray' : 'white', position: 'relative' }}>
+                  <div key={item.id} className="col-md-2 col-sm-12" style={{ background: isHighlighted ? 'lightgray' : 'white', position: 'relative' }}>
                     <img className="img-fluid" src={`${thumbnailRoot}/${item.poster_path}`} />
                     <div className="autocomplete-thumbnail">{item.title}</div>
                   </div>
@@ -68,13 +85,21 @@ class AddMovie extends React.Component {
                 renderMenu={(items, value, style) => {
                   return <div className="row" style={{ ...style, ...this.menuStyle }} children={items}/>
                 }}
-                getItemValue={item => { console.log(item); return item.title; }}
                 value={title}
-                onChange={ this.onMovieNameChanged }
-                onSelect={ val => this.setState({ title: val }) }
+                onChange={ this.onTitleInputChanged }
+                onSelect={ this.onMovieSelected }
               />
             </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <div>
+            {
+              movie && <div>
+                <img src={`${thumbnailRoot}/${movie.poster_path}`} />
+                <h5>{ movie.title }</h5>
+                <p>{ movie.overview }</p>
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </div>
+            }
+            </div>
           </form>
         : <SetApiKey onSubmit={this.onApiKeySubmit} />
       }
