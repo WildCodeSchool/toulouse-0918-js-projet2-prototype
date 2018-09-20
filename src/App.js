@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import MovieCard from './MovieCard';
+import MovieList from './MovieList';
+import AddMovie from './AddMovie';
 
 const movies = [
   {
@@ -36,27 +43,31 @@ const movies = [
   }
 ]
 class App extends Component {
+
   render() {
     return (
-      <div>
+      <Router>
+        <div>
 
-        <Header />
+          <Header />
 
-        <main role="main">
-          <div className="album py-5 bg-light">
-            <div className="container">
-              <div className="row">
-              {
-                movies.map((m, idx) => <MovieCard key={idx} movie={m} />)
-              }
+          <main role="main">
+            <div className="album py-5 bg-light">
+              <div className="container">
+
+                <Switch>
+                  <Route exact path="/" render={() => <MovieList movies={movies} />} />
+                  <Route exact path="/add-movie" render={() => <AddMovie />} />
+                </Switch>
+
               </div>
             </div>
-          </div>
-        </main>
+          </main>
 
-        <Footer />
+          <Footer />
 
-      </div>
+        </div>
+      </Router>
     );
   }
 }
