@@ -9,8 +9,9 @@ import Header from './Header';
 import Footer from './Footer';
 import MovieList from './MovieList';
 import AddMovie from './AddMovie';
+import Alert from './Alert';
 
-const movies = [
+const hardcodedMovies = [
   {
     "title": "Pirates of the Caribbean: On Stranger Tides",
     "img": "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_SY1000_CR0,0,675,1000_AL_.jpg",
@@ -44,26 +45,48 @@ const movies = [
 ]
 class App extends Component {
 
-  state = { movies }
-
-  onMovieAdded = movie => {
-    const movies = this.state.movies.map(m => ({ ...m })).concat({ ...movie })
-    this.setState({ movies })
+  constructor(props) {
+    super(props)
+    const storedMovies = localStorage.getItem('wmMovies')
+    let movies = hardcodedMovies.map((m, idx) => ({ ...m, id: idx + 1 }))
+    console.log('stored', storedMovies)
+    if (storedMovies) {
+      try {
+        movies = JSON.parse(storedMovies)
+        console.log('parsed', movies)
+      } catch(e) {}
+    }
+    const nextId = movies.reduce((carry, m) => Math.max(carry, m.id), 0) + 1
+    this.state = { movies, nextId }
   }
 
+  onMovieAdded = movie => {
+    const id = this.state.nextId
+    const movies = this.state.movies.map(m => ({ ...m })).concat({ ...movie, id })
+    localStorage.setItem('wmMovies', JSON.stringify(movies))
+    const alert = { status: 'success', message: `Le film ${movie.title} a été ajouté à votre collection` }
+    this.setState({ movies, nextId: id + 1, alert })
+    setTimeout(this.removeAlert, 2000)
+  }
+
+  removeAlert = () => this.setState({ alert: null })
+
   render() {
+    const { movies, alert } = this.state
     return (
       <Router>
         <div>
 
           <Header />
 
+          { alert && <Alert alert={alert} /> }
+
           <main role="main">
             <div className="album py-5 bg-light">
               <div className="container">
 
                 <Switch>
-                  <Route exact path="/" render={() => <MovieList movies={this.state.movies} />} />
+                  <Route exact path="/" render={() => <MovieList movies={movies} />} />
                   <Route exact path="/add-movie" render={() => <AddMovie onMovieAdded={this.onMovieAdded} />} />
                 </Switch>
 

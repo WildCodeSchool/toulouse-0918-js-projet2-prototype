@@ -5,7 +5,7 @@ const MovieCard = ({ movie: { title, img, summary } }) => (
     <div className="card mb-4 shadow-sm">
       <img className="card-img-top" src={ img || '/img/thumbnail.svg' } alt="Card image cap" />
       <div className="card-body">
-        <h5 class="card-title">{ title }</h5>
+        <h5 className="card-title">{ title }</h5>
         <p className="card-text">{ summary }</p>
         <div className="d-flex justify-content-between align-items-center">
           <div className="btn-group">

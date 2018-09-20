@@ -93,7 +93,7 @@ class AddMovie extends React.Component {
             <div>
             {
               movie && <div>
-                <img src={`${thumbnailRoot}/${movie.poster_path}`} />
+                <img style={{maxHeight: '200px', float: 'left', marginRight: '20px'}} src={`${thumbnailRoot}/${movie.poster_path}`} />
                 <h5>{ movie.title }</h5>
                 <p>{ movie.overview }</p>
                 <button type="submit" className="btn btn-primary">Submit</button>
